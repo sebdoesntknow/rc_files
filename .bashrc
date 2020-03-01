@@ -1,54 +1,99 @@
-# /etc/skel/.bashrc
-#
-# This file is sourced by all *interactive* bash shells on startup,
-# including some apparently interactive shells such as scp and rcp
-# that can't tolerate any output.  So make sure this doesn't display
-# anything or bad things will happen !
+# If not running interactively, don't do anything
+[[ $- != *i* ]] && return
 
+alias ls='ls --color=auto'
 
-# Test for an interactive shell.  There is no need to set anything
-# past this point for scp and rcp, and it's important to refrain from
-# outputting anything in those cases.
-if [[ $- != *i* ]] ; then
-	# Shell is non-interactive.  Be done now!
-	return
-fi
+# Git autocompletion and tools for bash
+source /usr/share/git/completion/git-completion.bash
+source /usr/share/git/completion/git-prompt.sh
+export GIT_PS1_SHOWCOLORHINTS=true
+export GIT_PS1_SHOWDIRTYSTATE=true
+export GIT_PS1_SHOWUNTRACKEDFILES=true
+export GIT_PS1_SHOWUPSTREAM="auto"
 
+# export GH_NOODLETOKEN=899ad1486d85d1a193a3425d5330c390279dbd11
+# export APP_SETTINGS='project.config.DevelopmentConfig'
 
-# Put your fun stuff here.
-
+# Default Editor
 export EDITOR="vim"
-export PATH=$HOME/bin:$PATH
-export PS1="\[\033[01;32m\]\u@\h\[\033[01;34m\] \w \$\[\033[00m\] "
-#export PS1="\[\033[01;31m\]\u@\033[01;32m\h\[\033[01;34m\] \w \$\[\033[00m\] "
 
-alias mp="mplayer"
-alias nc="netcat"
-alias ncmpc="ncmpc --host=/var/run/mpd.sock --no-mouse -c"
+# Prompt
+export PS1='\[\033[0;32m\]\[\033[0m\033[0;32m\]\u\[\033[0;36m\] \w\[\033[0;32m\]$(__git_ps1)\n\[\033[0;32m\]\[\033[0m\033[0;32m\] \$\[\033[0m\033[0;32m\]\[\033[0m\] '
 
-hh() { /usr/bin/ssh -l root $@; };
-g() { /usr/bin/gcc $1 -o "${1%%.*}"; };
-# QM stuff below
-qmgw() { /usr/bin/ssh -l seb gw.qm; };
+# GIT stuff
 
-function digs() { /usr/bin/dig $@ +short ; };
-
-function genpasswd() {                                                                                               
-        local l=$1                                                                                                   
-        [ "$l" == "" ] && l=20                                                                                       
-        tr -dc A-Za-z0-9_ < /dev/urandom | head -c ${l} | xargs                                                      
+function gs() {
+  /usr/bin/git status -s "$@"
 }
 
-#if [ "$PS1" ]                                                                                                        
-#then                                                                                                                 
-#    complete -cf sudo                                                                                                
-#fi                                                                                                                   
-                                                                                                                     
-#special screen-specific stuff for window titles                                                                     
-case $TERM in                                                                                                        
-    screen*)                                                                                                         
-        trap 'echo -ne "\ek${BASH_COMMAND%%\ *}\e\\"' DEBUG                                                          
-        #PROMPT_COMMAND='echo -ne "\ek$(short_pwd 15)\e\\"'                                                          
-        ;;                                                                                                           
-esac
+function ga() {
+  /usr/bin/git add .
+}
 
+function gb() {
+  /usr/bin/git branch -l
+}
+
+function gch() {
+  /usr/bin/git checkout "$@"
+}
+
+function gc() {
+  /usr/bin/git commit -am "$@"
+}
+
+function glo() {
+  /usr/bin/git log --oneline "$@"
+}
+
+function doclog() {
+  /usr/bin/docker logs -f "$@"
+}
+
+# Noodle Docker stuff
+function nenv() {
+  if [ -e ../services/.env ]; then
+    for v in $(/bin/cat ./.env); do
+      echo "export ${v}"
+      export "${v}"
+    done
+  else
+    echo "No .env file or you are not in the services main directory!"
+  fi
+}
+
+function nservdown() {
+  /usr/bin/docker-compose -f main/docker-compose.yml down -v
+}
+
+function nservbuildup() {
+  /usr/bin/docker-compose -f main/docker-compose.yml up -d --build
+}
+
+function nservrecdb() {
+  /usr/bin/docker exec flask-base-service python manage.py recreate_db
+}
+
+function dps() {
+  /usr/bin/docker ps
+}
+
+function ndrop() {
+  # bring noodle docker down
+  nservdown
+}
+
+function nup() {
+  # bring docker container up and recreated db
+  nenv
+  nservbuildup
+  nservrecdb
+}
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"                   # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" # This loads nvm bash_completion
+
+export PATH=$PATH:/home/seb/bin
+
+#source '/home/seb/lib/azure-cli/az.completion'
