@@ -1,2 +1,2 @@
 # rc_files
-My config files
+My own dotfiles

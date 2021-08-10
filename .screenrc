@@ -1,11 +1,12 @@
-# basic settings... self explainatory
+#term rxvt-unicode-256color
+term st-256color 
 nethack on
 deflogin on
 autodetach on
 startup_message off
 
 # the dash makes it a login shell
-defshell -bash
+# defshell -bash
 activity ""
 bell_msg ""
 vbell off
@@ -23,10 +24,9 @@ bind k
 bind ^k
 bind K kill
 
-# Here comes the pain...
-caption always "%{=bu kb} %=< %?%-Lw%?%{kc}[:%n %t:]%{kb}%?%+Lw%? >%= "
-hardstatus off
+#caption always "%{=bu kb} %=< %?%-Lw%?%{kc}[:%n %t:]%{kb}%?%+Lw%? >%= "
+#hardstatus off
 hardstatus alwayslastline
-#hardstatus string '%{= kG}[ %{G}%H %{g}][%= %{= kw}%?%-Lw%?%{r}(%{W}%n*%f%t%?(%u)%?%{r})%{w}%?%+Lw%?%?%= %{g}][%{B} %d-%m %{W}%c %{g}]' 
-#screen bash
+hardstatus string '%{= kG}[ %{G}%H %{g}][%= %{= kw}%?%-Lw%?%{r}(%{W}%n*%f%t%?(%u)%?%{r})%{w}%?%+Lw%?%?%= %{g}][%{B} %d-%m %{W}%c %{g}]' 
+screen bash
 

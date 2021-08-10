@@ -1,6 +1,0 @@
-URxvt*font: xft:terminus:pixelsize=15
-URxvt*boldFont: xft:terminus:bold:pixelsize=15
-URxvt*background:	#000000
-URxvt*foreground:	#FFFFFF
-Urxvt*scrollbar:	off
-URxvt*scrollstyle:rxvt
